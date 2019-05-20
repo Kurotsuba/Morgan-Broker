@@ -13,17 +13,103 @@ public class MarketDepth {
         sellerList = new Vector<>();
     }
 
+    private Entity buySellingOrder(Entity request){
+        if(sellerList.size() == 0){
+            return request;
+        }
+
+        for (int i = 0; i < sellerList.size(); i++) {
+            Double listAmount = sellerList.get(i).amount;
+            Double requestAmount = request.amount;
+            if(sellerList.get(i).price < request.price){
+                if(listAmount < requestAmount){
+                    request.amount -= sellerList.get(i).amount;
+                    sellerList.remove(i);
+                    // TODO: record trade success
+                }else if(listAmount == requestAmount){
+                    sellerList.remove(i);
+                    request.amount = 0d;
+                    return request;
+                    // TODO: record trade success
+                }else{
+                    sellerList.get(i).amount -= request.amount;
+                    return request;
+                    // TODO: record trade success
+                }
+            }else{
+                return request;
+            }
+        }
+        return request;
+    }
+
+    private Entity sellBuyingOrder(Entity request){
+        if(buyerList.size() == 0){
+            return request;
+        }
+
+        for (int i = 0; i < buyerList.size(); i++) {
+            Double listAmount = buyerList.get(i).amount;
+            Double requestAmount = request.amount;
+            if(buyerList.get(i).price > request.price){
+                if(listAmount > requestAmount){
+                    request.amount -= buyerList.get(i).amount;
+                    buyerList.remove(i);
+                    // TODO: record trade success
+                }else if(listAmount == requestAmount){
+                    buyerList.remove(i);
+                    request.amount = 0d;
+                    return request;
+                    // TODO: record trade success
+                }else{
+                    buyerList.get(i).amount -= request.amount;
+                    return request;
+                    // TODO: record trade success
+                }
+            }else{
+                return request;
+            }
+        }
+        return request;
+
+    }
+
     public boolean updateMD(Order order){
-        if(order.getType() == 's'){
+        Double oPrice = order.getPrice();
+        Double oAmount = order.getAmount();
+        if(order.getSide() == 's'){
+            Entity rest = sellBuyingOrder(new Entity(oPrice, oAmount));
             if(sellerList.size() == 0){
-                sellerList.add(new Entity(order.getPrice(), order.getAmount()));
+                sellerList.add(rest);
                 return true;
             }
-            return true;
-        }else if(order.getType() == 'b'){
-            if(buyerList.size() == 0){
-                buyerList.add(new Entity(order.getPrice(), order.getAmount()));
+            for (int i = 0; i < sellerList.size(); i++) {
+                if(sellerList.get(i).price == rest.price){
+                    sellerList.get(i).amount += rest.amount;
+                    return true;
+                }else if(sellerList.get(i).price > rest.price) {
+                    sellerList.add(i, rest);
+                    return true;
+                }
             }
+            sellerList.add(rest);
+            return true;
+        }else if(order.getSide() == 'b'){
+            Entity rest = buySellingOrder(new Entity(oPrice, oAmount));
+            if(buyerList.size() == 0){
+                buyerList.add(rest);
+                return true;
+            }
+            for (int i = 0; i < buyerList.size(); i++) {
+                if(buyerList.get(i).price == rest.price){
+                    buyerList.get(i).amount += rest.amount;
+                    return true;
+                }else if(buyerList.get(i).price < rest.price) {
+                    buyerList.add(i, rest);
+                    return true;
+                }
+            }
+            buyerList.add(rest);
             return true;
         }else{
             return false;
