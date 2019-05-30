@@ -1,4 +1,4 @@
-package group.eis.morganborker.model;
+package group.eis.morganborker.entity;
 
 public enum ResultStatus {
     SUCCESS(200),

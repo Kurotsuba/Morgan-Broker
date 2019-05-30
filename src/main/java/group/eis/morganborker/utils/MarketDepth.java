@@ -1,7 +1,7 @@
 package group.eis.morganborker.utils;
 
 
-import group.eis.morganborker.model.Order;
+import group.eis.morganborker.entity.Order;
 
 import java.util.Vector;
 
@@ -19,8 +19,8 @@ public class MarketDepth {
         }
 
         for (int i = 0; i < sellerList.size(); i++) {
-            Double listAmount = sellerList.get(i).amount;
-            Double requestAmount = request.amount;
+            int listAmount = sellerList.get(i).amount;
+            int requestAmount = request.amount;
             if(sellerList.get(i).price < request.price){
                 if(listAmount < requestAmount){
                     request.amount -= sellerList.get(i).amount;
@@ -28,7 +28,7 @@ public class MarketDepth {
                     // TODO: record trade success
                 }else if(listAmount == requestAmount){
                     sellerList.remove(i);
-                    request.amount = 0d;
+                    request.amount = 0;
                     return request;
                     // TODO: record trade success
                 }else{
@@ -49,8 +49,8 @@ public class MarketDepth {
         }
 
         for (int i = 0; i < buyerList.size(); i++) {
-            Double listAmount = buyerList.get(i).amount;
-            Double requestAmount = request.amount;
+            int listAmount = buyerList.get(i).amount;
+            int requestAmount = request.amount;
             if(buyerList.get(i).price > request.price){
                 if(listAmount > requestAmount){
                     request.amount -= buyerList.get(i).amount;
@@ -58,7 +58,7 @@ public class MarketDepth {
                     // TODO: record trade success
                 }else if(listAmount == requestAmount){
                     buyerList.remove(i);
-                    request.amount = 0d;
+                    request.amount = 0;
                     return request;
                     // TODO: record trade success
                 }else{
@@ -75,8 +75,8 @@ public class MarketDepth {
     }
 
     public boolean updateMD(Order order){
-        Double oPrice = order.getPrice();
-        Double oAmount = order.getAmount();
+        double oPrice = order.getPrice();
+        int oAmount = order.getAmount();
         if(order.getSide() == 's'){
             Entity rest = sellBuyingOrder(new Entity(oPrice, oAmount));
             if(sellerList.size() == 0){
@@ -126,9 +126,9 @@ public class MarketDepth {
 }
 
 class Entity{
-    public Double price;
-    public Double amount;
-    Entity(Double price, Double amount){
+    public double price;
+    public int amount;
+    Entity(double price, int amount){
         this.price = price;
         this.amount = amount;
     }
