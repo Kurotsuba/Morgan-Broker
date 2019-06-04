@@ -2,7 +2,6 @@ package group.eis.morganborker.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "order")
@@ -13,8 +12,11 @@ public class Order {
     @Column(nullable = false, name = "order_id")
     private Long orderID;
 
+    @Column(name = "trader_order_id")
+    private Long traderOrderID;
+
     @Column(nullable = false, name = "future_id")
-    private long futureID;
+    private Long futureID;
 
     @Column(nullable = false, name = "type")
     private char type;
@@ -23,23 +25,45 @@ public class Order {
     private char side;
 
     @Column(nullable = false, name = "price")
-    private double price;
+    private Integer price;
+
+    @Column(name = "price2")
+    private Integer price2;
 
     @Column(nullable = false, name = "amount")
-    private int amount;
+    private Integer amount;
 
-    @Column(nullable = false, name = "broker_name")
-    private String brokerName;
+    @Column(name = "trader_name")
+    private String traderName;
+
+    @Column(nullable = false, name = "trader_id")
+    private Long traderID;
+
 
     private LocalDateTime timeStamp;
 
-    public Order(long futureID, char type, char side, double price, int amount, String brokerName, LocalDateTime timeStamp) {
+    public Order(Long futureID, char type, char side, Integer price, Integer price2, Integer amount, String traderName, Long traderID, LocalDateTime timeStamp) {
         this.futureID = futureID;
         this.type = type;
         this.side = side;
         this.price = price;
+        this.price2 = price2;
         this.amount = amount;
-        this.brokerName = brokerName;
+        this.traderName = traderName;
+        this.traderID = traderID;
+        this.timeStamp = timeStamp;
+    }
+
+    public Order(Long traderOrderID, Long futureID, char type, char side, Integer price, Integer price2, Integer amount, String traderName, Long traderID, LocalDateTime timeStamp) {
+        this.traderOrderID = traderOrderID;
+        this.futureID = futureID;
+        this.type = type;
+        this.side = side;
+        this.price = price;
+        this.price2 = price2;
+        this.amount = amount;
+        this.traderName = traderName;
+        this.traderID = traderID;
         this.timeStamp = timeStamp;
     }
 
@@ -51,11 +75,19 @@ public class Order {
         this.orderID = orderID;
     }
 
-    public long getFutureID() {
+    public Long getTraderOrderID() {
+        return traderOrderID;
+    }
+
+    public void setTraderOrderID(Long traderOrderID) {
+        this.traderOrderID = traderOrderID;
+    }
+
+    public Long getFutureID() {
         return futureID;
     }
 
-    public void setFutureID(long futureID) {
+    public void setFutureID(Long futureID) {
         this.futureID = futureID;
     }
 
@@ -75,28 +107,44 @@ public class Order {
         this.side = side;
     }
 
-    public double getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
-    public int getAmount() {
+    public Integer getPrice2() {
+        return price2;
+    }
+
+    public void setPrice2(Integer price2) {
+        this.price2 = price2;
+    }
+
+    public Integer getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(Integer amount) {
         this.amount = amount;
     }
 
-    public String getBrokerName() {
-        return brokerName;
+    public String getTraderName() {
+        return traderName;
     }
 
-    public void setBrokerName(String brokerName) {
-        this.brokerName = brokerName;
+    public void setTraderName(String traderName) {
+        this.traderName = traderName;
+    }
+
+    public Long getTraderID() {
+        return traderID;
+    }
+
+    public void setTraderID(Long traderID) {
+        this.traderID = traderID;
     }
 
     public LocalDateTime getTimeStamp() {

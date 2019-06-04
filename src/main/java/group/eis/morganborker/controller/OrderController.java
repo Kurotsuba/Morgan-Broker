@@ -20,7 +20,13 @@ public class OrderController {
             case 'c':break;
             default:break;
         }
-        return "Error";
+        return "Success";
 
     }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String getOrder(){
+        return "fake order";
+    }
+
 }
