@@ -1,4 +1,4 @@
-package group.eis.morganborker;
+package group.eis.morganborker.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
