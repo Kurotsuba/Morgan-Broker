@@ -2,18 +2,20 @@ package group.eis.morganborker.controller;
 
 import group.eis.morganborker.entity.Order;
 import group.eis.morganborker.utils.OrderParser;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @RestController
 @RequestMapping("/order")
 public class OrderController {
+    @ApiOperation(value = "recieve a order", notes = "")
     @RequestMapping(method = RequestMethod.POST)
-    public String order(String request){
-        OrderParser op = new OrderParser();
-        Order currentOrder = op.getOrder(request);
-        switch (currentOrder.getType()){
+    public String order(@RequestBody Order order){
+        switch (order.getType()){
             case 'm':break;
             case 'f':break;
             case 's':break;
@@ -24,9 +26,11 @@ public class OrderController {
 
     }
 
+    @ApiOperation(value = "get a order with order_id")
     @RequestMapping(method = RequestMethod.GET)
-    public String getOrder(){
-        return "fake order";
+    public Order getOrder(@RequestParam String ID){
+        Order  fakeOrder = new Order(0l, 't', 't', 0, 0, 0, "test", 0l, LocalDateTime.now());
+        return fakeOrder;
     }
 
 }
