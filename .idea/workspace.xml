@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="499edbc8-74fc-4bca-8c91-f0f0b02984e9" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/config/WebsocketConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/config/WebsocketConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/controller/OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/ActiveOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/ActiveOrder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/Future.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/Future.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/Market.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/Market.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/Order.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/TradeHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/TradeHistory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/Trader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/Trader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/TraderOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/TraderOrder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/WebSocketServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/WebSocketServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/OrderParser.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/group/eis/morganborker/MorganBrokerApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/group/eis/morganborker/MorganBrokerApplicationTests.java" afterDir="false" />
-    </list>
+    <list default="true" id="499edbc8-74fc-4bca-8c91-f0f0b02984e9" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -99,7 +82,7 @@
         <entry file="file://$PROJECT_DIR$/Dockerfile">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="132">
-              <caret line="6" column="91" selection-start-line="6" selection-start-column="91" selection-end-line="6" selection-end-column="91" />
+              <caret line="6" column="46" lean-forward="true" selection-start-line="6" selection-start-column="46" selection-end-line="6" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -499,12 +482,12 @@
       <workItem from="1559615538907" duration="3344000" />
       <workItem from="1559627206966" duration="15032000" />
       <workItem from="1559658217456" duration="4993000" />
-      <workItem from="1559697904487" duration="10048000" />
+      <workItem from="1559697904487" duration="11240000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="56211000" />
+    <option name="totallyTimeSpent" value="57403000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="0" width="1666" height="1047" extended-state="0" />
@@ -946,7 +929,7 @@
     <entry file="file://$PROJECT_DIR$/Dockerfile">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="132">
-          <caret line="6" column="91" selection-start-line="6" selection-start-column="91" selection-end-line="6" selection-end-column="91" />
+          <caret line="6" column="46" lean-forward="true" selection-start-line="6" selection-start-column="46" selection-end-line="6" selection-end-column="46" />
         </state>
       </provider>
     </entry>
