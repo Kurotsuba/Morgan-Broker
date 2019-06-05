@@ -20,4 +20,7 @@ public class Market {
 
     @Column(nullable = false, name = "sell_order_list_id")
     private Long sellOrderListID;
+
+    public Market() {
+    }
 }

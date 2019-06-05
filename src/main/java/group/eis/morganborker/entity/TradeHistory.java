@@ -56,4 +56,7 @@ public class TradeHistory {
     public void setPrice(Integer price) {
         this.price = price;
     }
+
+    public TradeHistory() {
+    }
 }

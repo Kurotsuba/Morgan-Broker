@@ -10,4 +10,7 @@ public class TraderOrder {
     public Integer price2;
     public Integer amount;
     public String traderName;
+
+    public TraderOrder() {
+    }
 }

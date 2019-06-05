@@ -10,7 +10,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class MorganBrokerApplicationTests {
 
     @Test
-    public void contextLoads() {
+    public void doNothing(){
+
     }
+//    public void contextLoads() {
+//    }
 
 }

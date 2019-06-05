@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "order")
+@Table(name = "[order]")
 public class Order {
 
     @Id
@@ -39,8 +39,12 @@ public class Order {
     @Column(nullable = false, name = "trader_id")
     private Long traderID;
 
-    @GeneratedValue
+    @Column(name = "time_stamp")
     private LocalDateTime timeStamp;
+
+    public Order(){
+
+    }
 
     public Order(Long futureID, char type, char side, Integer price, Integer price2, Integer amount, String traderName, Long traderID, LocalDateTime timeStamp) {
         this.futureID = futureID;
@@ -51,6 +55,7 @@ public class Order {
         this.amount = amount;
         this.traderName = traderName;
         this.traderID = traderID;
+        this.timeStamp = LocalDateTime.now();
     }
 
     public Order(Long traderOrderID, Long futureID, char type, char side, Integer price, Integer price2, Integer amount, String traderName, Long traderID, LocalDateTime timeStamp) {
@@ -63,6 +68,7 @@ public class Order {
         this.amount = amount;
         this.traderName = traderName;
         this.traderID = traderID;
+        this.timeStamp = LocalDateTime.now();
     }
 
     public Order(TraderOrder traderOrder){
@@ -75,6 +81,7 @@ public class Order {
         this.type = traderOrder.type;
         this.side = traderOrder.side;
         this.traderID = traderOrder.traderID;
+        this.timeStamp = LocalDateTime.now();
     }
 
     public Long getOrderID() {
@@ -123,14 +130,6 @@ public class Order {
 
     public void setPrice(Integer price) {
         this.price = price;
-    }
-
-    public Integer getPrice2() {
-        return price2;
-    }
-
-    public void setPrice2(Integer price2) {
-        this.price2 = price2;
     }
 
     public Integer getAmount() {

@@ -27,4 +27,7 @@ public class Future {
 
     @Column(name = "icon")
     private String icon;
+
+    public Future() {
+    }
 }

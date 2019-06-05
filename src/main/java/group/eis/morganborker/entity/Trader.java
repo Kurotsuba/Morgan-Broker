@@ -17,4 +17,7 @@ public class Trader {
 
     @Column(name = "order_list_id")
     private Long[] orderList;
+
+    public Trader() {
+    }
 }

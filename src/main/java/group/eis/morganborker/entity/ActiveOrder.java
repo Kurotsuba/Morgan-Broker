@@ -17,6 +17,8 @@ public class ActiveOrder {
     @Column(name = "rest_amount")
     private Integer restAmount;
 
+    public ActiveOrder(){}
+
     public ActiveOrder(Long orderID, Integer restAmount) {
         this.orderID = orderID;
         this.restAmount = restAmount;
