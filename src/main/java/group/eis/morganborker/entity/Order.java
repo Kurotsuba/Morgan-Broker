@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class Order {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, name = "order_id")
     private Long orderID;
 
@@ -39,7 +39,7 @@ public class Order {
     @Column(nullable = false, name = "trader_id")
     private Long traderID;
 
-
+    @GeneratedValue
     private LocalDateTime timeStamp;
 
     public Order(Long futureID, char type, char side, Integer price, Integer price2, Integer amount, String traderName, Long traderID, LocalDateTime timeStamp) {
@@ -51,7 +51,6 @@ public class Order {
         this.amount = amount;
         this.traderName = traderName;
         this.traderID = traderID;
-        this.timeStamp = timeStamp;
     }
 
     public Order(Long traderOrderID, Long futureID, char type, char side, Integer price, Integer price2, Integer amount, String traderName, Long traderID, LocalDateTime timeStamp) {
@@ -64,7 +63,18 @@ public class Order {
         this.amount = amount;
         this.traderName = traderName;
         this.traderID = traderID;
-        this.timeStamp = timeStamp;
+    }
+
+    public Order(TraderOrder traderOrder){
+        this.amount = traderOrder.amount;
+        this.futureID = traderOrder.futureID;
+        this.traderOrderID = traderOrder.orderID;
+        this.price = traderOrder.price;
+        this.price2 = traderOrder.price2;
+        this.traderName = traderOrder.traderName;
+        this.type = traderOrder.type;
+        this.side = traderOrder.side;
+        this.traderID = traderOrder.traderID;
     }
 
     public Long getOrderID() {
