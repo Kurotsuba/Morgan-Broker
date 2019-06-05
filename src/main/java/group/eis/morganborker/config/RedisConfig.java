@@ -13,7 +13,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@EnableCaching
+//@EnableCaching
 public class RedisConfig {
     @Bean
     @SuppressWarnings("all")

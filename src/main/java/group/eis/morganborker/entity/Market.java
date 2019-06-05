@@ -1,7 +1,5 @@
 package group.eis.morganborker.entity;
 
-import group.eis.morganborker.utils.MarketDepth;
-
 import javax.persistence.*;
 
 @Entity
