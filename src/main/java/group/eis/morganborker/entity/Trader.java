@@ -9,7 +9,6 @@ import java.util.UUID;
 @Table(name = "trader")
 public class Trader {
     @Id
-    @GeneratedValue
     @Column(nullable = false, name = "trader_id")
     private Long traderID;
 
@@ -17,5 +16,8 @@ public class Trader {
     private String traderName;
 
     @Column(name = "order_list_id")
-    private Long orderListID;
+    private Long[] orderList;
+
+    public Trader() {
+    }
 }
