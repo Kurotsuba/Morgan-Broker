@@ -1,16 +1,20 @@
 package group.eis.morganborker.service.Impl;
 
+import com.google.gson.Gson;
 import group.eis.morganborker.entity.Order;
 import group.eis.morganborker.entity.Trader;
 import group.eis.morganborker.entity.TraderOrder;
 import group.eis.morganborker.repository.OrderRepository;
 import group.eis.morganborker.repository.TraderRepository;
 import group.eis.morganborker.service.OrderService;
+import group.eis.morganborker.service.TradeService;
 import group.eis.morganborker.utils.OrderQueueUtil;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 
 @Service("OrderService")
 @Repository
@@ -25,6 +29,11 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private TraderRepository traderRepository;
 
+    @Autowired
+    private WebSocketServer webSocketServer;
+
+    @Autowired
+    private TradeService tradeService;
 
     @Override
     public Long receiveOrder(TraderOrder traderOrder) {
@@ -45,20 +54,31 @@ public class OrderServiceImpl implements OrderService {
             orderQueueUtil.addOrder(order);
             orderRepository.save(order);
 
-            switch (order.getType()){
-                case 'm':{
-                    marketOrder(order);
-                }case 'f':{
-                    fixOrder(order);
-                }case 's':{
-                    stopOrder(order);
-                }case 'c':{
-                    cancelOrder(order);
-                }default:{
-                    break;
-                }
-            }
             System.out.println("order saved");
+            synchronized (this){
+
+                switch (order.getType()){
+                    case 'm':{
+                        marketOrder(order);
+                    }case 'f':{
+                        fixOrder(order);
+                    }case 's':{
+                        stopOrder(order);
+                    }case 'c':{
+                        cancelOrder(order);
+                    }default:{
+                        testOrder(order);
+                    }
+                }
+
+                HashMap<String, String> wsResult = new HashMap<>();
+                wsResult.put("traderID", order.getTraderID().toString());
+                wsResult.put("orderID", order.getOrderID().toString());
+                wsResult.put("message", "order process done");
+
+                Gson gson = new Gson();
+                WebSocketServer.sendInfo(gson.toJson(wsResult));
+            }
             return order.getOrderID();
 
 
@@ -78,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findOrderByTraderIDAndTraderOrderID(traderID, traderOrderID);
     }
 
-    private Long marketOrder(Order order){
+    private void marketOrder(Order order){
         Integer rest = order.getAmount();
         Order firstOrder = new Order();
         Integer price = 0;
@@ -91,20 +111,68 @@ public class OrderServiceImpl implements OrderService {
             if(price == -1){
                 break;
             }
-            firstOrder = orderQueueUtil.getOrder(price);
+            firstOrder = orderQueueUtil.getOrder(order.getSide(), price);
 
-            if(rest >= firstOrder.getAmount()){
-                rest -= firstOrder.getAmount();
-                orderQueueUtil.popOrder(price);
-            }else{
-                orderQueueUtil.headOrderUpdate(price, firstOrder.getAmount()-rest);
-                rest = 0;
+            Integer dealAmount = tradeService.deal(order, firstOrder);
+            if(dealAmount == rest){
+                break;
             }
+            rest -= dealAmount;
         }
-        return 0l;
-    };
-    private Long fixOrder(Order order){return 0l;};
-    private Long stopOrder(Order order){return 0l;};
-    private Long cancelOrder(Order order){return 0l;};
+    }
+
+
+    private void fixOrder(Order order){
+        char side = order.getSide();
+        Integer price = 0;
+        Integer rest = order.getAmount();
+        if (side == 'b') {
+
+            if(orderQueueUtil.getHighestPrice(order) >= order.getPrice()){
+                orderQueueUtil.addAmount(order);
+                return;
+            }
+            price = orderQueueUtil.getLowestPrice(order);
+            while(price <= order.getPrice()){
+                Integer dealAmount = tradeService.deal(orderQueueUtil.getOrder('b', price), order);
+                if(dealAmount == rest){
+                    return;
+                }
+                rest -= dealAmount;
+                if(orderQueueUtil.getAmount(order.getFutureID(), 'b', price) == 0){
+                    price = orderQueueUtil.getLowestPrice(order);
+                }
+            }
+            orderQueueUtil.addAmount(order);
+
+        }else if(side == 's'){
+            if(orderQueueUtil.getLowestPrice(order) <= order.getPrice()){
+                orderQueueUtil.addAmount(order);
+                return;
+            }
+            price = orderQueueUtil.getHighestPrice(order);
+            while(price >= order.getPrice()){
+                Integer dealAmount = tradeService.deal(orderQueueUtil.getOrder('s', price), order);
+                if(dealAmount == rest){
+                    return;
+                }
+                rest -= dealAmount;
+                if(orderQueueUtil.getAmount(order.getFutureID(), 's', price) == 0){
+                    price = orderQueueUtil.getHighestPrice(order);
+                }
+            }
+            orderQueueUtil.addAmount(order);
+        }
+
+
+    }
+
+    private void stopOrder(Order order){};
+
+    private void cancelOrder(Order order){};
+
+    private void testOrder(Order order){
+        orderQueueUtil.addAmount(order);
+    }
 
 }

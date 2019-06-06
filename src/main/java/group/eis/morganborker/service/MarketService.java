@@ -1,5 +1,7 @@
 package group.eis.morganborker.service;
 
+import java.util.HashMap;
+
 public interface MarketService {
-    String getMarket(Long futureID);
+    HashMap<String, HashMap<String, Integer>> getMarket(Long futureID);
 }

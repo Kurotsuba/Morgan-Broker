@@ -6,6 +6,7 @@ import group.eis.morganborker.utils.RedisUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Service("MarketService")
@@ -18,9 +19,9 @@ public class MarketServiceImpl implements MarketService {
         gson = new Gson();
     }
     @Override
-    public String getMarket(Long futureID) {
-        Set<Object> buyKeySet = redisUtil.hashKeys(futureID.toString()+"buy_list");
-        Set<Object> sellKeySet = redisUtil.hashKeys(futureID.toString()+"sell_list");
+    public HashMap<String, HashMap<String, Integer>> getMarket(Long futureID) {
+        Set<Object> buyKeySet = redisUtil.hashKeys(futureID.toString()+"_buy_list");
+        Set<Object> sellKeySet = redisUtil.hashKeys(futureID.toString()+"_sell_list");
 
         HashMap<String, HashMap<String, Integer>> resultMap = new HashMap<>();
         HashMap<String, Integer> buyMap = new HashMap<>();
@@ -36,6 +37,6 @@ public class MarketServiceImpl implements MarketService {
 
         resultMap.put("buy_list", buyMap);
         resultMap.put("sell_list", sellMap);
-        return gson.toJson(resultMap);
+        return resultMap;
     }
 }

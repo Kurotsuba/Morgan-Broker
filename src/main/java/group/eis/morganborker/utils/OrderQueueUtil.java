@@ -11,6 +11,12 @@ public class OrderQueueUtil {
     @Autowired
     RedisUtil redisUtil;
 
+    /*
+    * maintain several redis hashmaps for market depth
+    * name = {futureID}_[buy/sell]_list
+    * key = price
+    * value = amount
+     */
     public boolean addAmount(Order order){
         String key = order.getFutureID().toString();
         if(order.getSide() == 'b'){
@@ -30,21 +36,13 @@ public class OrderQueueUtil {
         }
     }
 
-
-    public boolean addOrder(Order order){
-        return redisUtil.listPush(order.getPrice().toString(), order.getOrderID());
-    }
-
-    public Order getOrder(Integer price){
-        return (Order)redisUtil.listGetOne(price.toString(), 0);
-    }
-
-    public Order popOrder(Integer price){
-        return (Order)redisUtil.listPop(price.toString());
-    }
-
-    public void headOrderUpdate(Integer price, Integer value){
-        redisUtil.listUpdate(price.toString(), 0, value);
+    public Integer getAmount(Long futureID, char side, Integer price){
+        if(side == 'b'){
+            return (Integer)redisUtil.hashGet(futureID.toString()+"_buy_list", price.toString());
+        }else if(side == 's'){
+            return (Integer)redisUtil.hashGet(futureID.toString()+"_sell_list", price.toString());
+        }
+        return -1;
     }
 
     public Integer getLowestPrice(Order order){
@@ -72,4 +70,44 @@ public class OrderQueueUtil {
 
         return Collections.max(numPrices);
     }
+
+    /*
+    * maintain several redis list for time queue for order
+    * name = {side}_{price}
+    * value = order
+     */
+
+    public boolean addOrder(Order order){
+        return redisUtil.listPush(order.getSide() + "_" + order.getPrice().toString(), order);
+    }
+
+    public Order getOrder(char side, Integer price){
+        return (Order)redisUtil.listGetOne(side + "_" + price.toString(), 0);
+    }
+
+    public Order popOrder(char side, Integer price){
+        return (Order)redisUtil.listPop(side + "_" + price.toString());
+    }
+
+    public void headOrderUpdate(char side, Integer price, Integer value){
+        redisUtil.listUpdate(side + "_" + price.toString(), 0, value);
+    }
+
+    /*
+    * maintain a redis set for stoporder
+    * name = "stop_list"
+    * value = order_id
+     */
+    public void addStopOrder(Order order){
+
+    }
+
+    public void findStopOrder(Long order_id){
+
+    }
+
+    public void deleteStopOrder(Long stop_id){
+
+    }
+
 }
