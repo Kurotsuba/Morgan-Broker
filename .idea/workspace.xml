@@ -2,15 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="499edbc8-74fc-4bca-8c91-f0f0b02984e9" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/controller/MarketController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/controller/MarketController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/ActiveOrder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/MarketServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/MarketServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/OrderServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/TradeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/TradeServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/MarketService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/MarketService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/TradeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/TradeService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/OrderQueueUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/OrderQueueUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/RedisUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/RedisUtil.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -58,8 +52,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/OrderServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="160" column="59" selection-start-line="160" selection-start-column="59" selection-end-line="160" selection-end-column="59" />
+            <state relative-caret-position="322">
+              <caret line="170" lean-forward="true" selection-start-line="170" selection-end-line="170" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2252#2253#0" expanded="true" />
@@ -106,15 +100,21 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/OrderQueueUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="498">
-              <caret line="109" selection-start-line="109" selection-end-line="109" />
+            <state relative-caret-position="432">
+              <caret line="109" column="40" selection-start-line="109" selection-start-column="40" selection-end-line="109" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1608#1609#0" expanded="true" />
                 <element signature="e#1686#1687#0" expanded="true" />
+                <element signature="e#3266#3267#0" expanded="true" />
+                <element signature="e#3290#3291#0" expanded="true" />
+                <element signature="e#3323#3324#0" expanded="true" />
+                <element signature="e#3390#3391#0" expanded="true" />
+                <element signature="e#3496#3497#0" expanded="true" />
+                <element signature="e#3520#3521#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -168,11 +168,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/RedisUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="231" column="5" lean-forward="true" selection-start-line="231" selection-start-column="5" selection-end-line="231" selection-end-column="5" />
+            <state relative-caret-position="753">
+              <caret line="275" column="22" selection-start-line="275" selection-start-column="22" selection-end-line="275" selection-end-column="22" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2911#2912#0" expanded="true" />
@@ -238,7 +238,6 @@
         <option value="$PROJECT_DIR$/src/test/java/group/eis/morganborker/RedisUtilsTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/OrderQueue.java" />
         <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/entity/Trader.java" />
-        <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/RedisUtil.java" />
         <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/OrderService.java" />
         <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/controller/OrderController.java" />
         <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/controller/HistoryController.java" />
@@ -253,6 +252,7 @@
         <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/MarketServiceImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/TradeService.java" />
         <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/TradeServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/RedisUtil.java" />
         <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/OrderServiceImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/OrderQueueUtil.java" />
       </list>
@@ -266,8 +266,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-7" />
-    <option name="width" value="1734" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1004" />
     <option name="height" value="1047" />
   </component>
   <component name="ProjectView">
@@ -546,7 +547,7 @@
       <workItem from="1559658217456" duration="4993000" />
       <workItem from="1559697904487" duration="11240000" />
       <workItem from="1559754410937" duration="6034000" />
-      <workItem from="1559813069347" duration="6746000" />
+      <workItem from="1559813069347" duration="8632000" />
     </task>
     <servers />
   </component>
@@ -583,13 +584,13 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="83254000" />
+    <option name="totallyTimeSpent" value="85140000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.29584223" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.607221" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -620,7 +621,7 @@
       <window_info anchor="right" id="Palette" order="4" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
       <window_info anchor="right" id="Maven Projects" order="6" />
-      <window_info anchor="right" id="Database" order="7" visible="true" weight="0.08315565" />
+      <window_info anchor="right" id="Database" order="7" weight="0.17067833" />
       <window_info anchor="right" id="Palette&#9;" order="8" />
       <window_info anchor="right" id="Theme Preview" order="9" />
       <window_info anchor="right" id="Bean Validation" order="10" />
@@ -980,32 +981,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/OrderServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="160" column="59" selection-start-line="160" selection-start-column="59" selection-end-line="160" selection-end-column="59" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2252#2253#0" expanded="true" />
-            <element signature="e#2301#2302#0" expanded="true" />
-            <element signature="e#4542#4543#0" expanded="true" />
-            <element signature="e#4589#4590#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/OrderQueueUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="498">
-          <caret line="109" selection-start-line="109" selection-end-line="109" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1608#1609#0" expanded="true" />
-            <element signature="e#1686#1687#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/group/eis/morganborker/RedisUtilsTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="462">
@@ -1018,12 +993,44 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/RedisUtil.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="231" column="5" lean-forward="true" selection-start-line="231" selection-start-column="5" selection-end-line="231" selection-end-column="5" />
+        <state relative-caret-position="753">
+          <caret line="275" column="22" selection-start-line="275" selection-start-column="22" selection-end-line="275" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2911#2912#0" expanded="true" />
             <element signature="e#2970#2971#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/group/eis/morganborker/service/Impl/OrderServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="322">
+          <caret line="170" lean-forward="true" selection-start-line="170" selection-end-line="170" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2252#2253#0" expanded="true" />
+            <element signature="e#2301#2302#0" expanded="true" />
+            <element signature="e#4542#4543#0" expanded="true" />
+            <element signature="e#4589#4590#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/group/eis/morganborker/utils/OrderQueueUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="109" column="40" selection-start-line="109" selection-start-column="40" selection-end-line="109" selection-end-column="40" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1608#1609#0" expanded="true" />
+            <element signature="e#1686#1687#0" expanded="true" />
+            <element signature="e#3266#3267#0" expanded="true" />
+            <element signature="e#3290#3291#0" expanded="true" />
+            <element signature="e#3323#3324#0" expanded="true" />
+            <element signature="e#3390#3391#0" expanded="true" />
+            <element signature="e#3496#3497#0" expanded="true" />
+            <element signature="e#3520#3521#0" expanded="true" />
           </folding>
         </state>
       </provider>

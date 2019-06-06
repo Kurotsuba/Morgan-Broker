@@ -231,4 +231,49 @@ public final class RedisUtil {
         }
     }
 
+
+    public Set<Object> setGet(String key){
+        try{
+            return redisTemplate.opsForSet().members(key);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean setIsMember(String key, Object value){
+        try{
+            return redisTemplate.opsForSet().isMember(key, value);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public long setAdd(String key, Object... value){
+        try{
+            return redisTemplate.opsForSet().add(key, value);
+        }catch (Exception e){
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public long setSize(String key){
+        try{
+            return redisTemplate.opsForSet().size(key);
+        }catch (Exception e){
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public long setRemove(String key, Object... values){
+        try{
+            return redisTemplate.opsForSet().remove(key, values);
+        }catch (Exception e){
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }

@@ -94,20 +94,20 @@ public class OrderQueueUtil {
     }
 
     /*
-    * maintain a redis set for stoporder
-    * name = "stop_list"
+    * maintain a redis set for cancel order
+    * name = "cancel_list"
     * value = order_id
      */
-    public void addStopOrder(Order order){
-
+    public void addCancelOrder(Order order){
+        redisUtil.setAdd("cancel_list", order.getOrderID());
     }
 
-    public void findStopOrder(Long order_id){
-
+    public boolean findStopOrder(Long order_id){
+        return redisUtil.setIsMember("cancel_list", order_id);
     }
 
     public void deleteStopOrder(Long stop_id){
-
+        redisUtil.setRemove("cancel_list", stop_id);
     }
 
 }
