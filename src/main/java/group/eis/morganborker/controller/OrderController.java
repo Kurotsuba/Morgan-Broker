@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/order")
 public class OrderController {
-    @Autowired
-    private  OrderService orderService;
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
     @ApiOperation(value = "send a order", notes = "")
     @RequestMapping(method = RequestMethod.POST)
     public Long order(@RequestBody TraderOrder order){
-        return orderService.recieveOrder(order);
+        return orderService.receiveOrder(order);
 
     }
 
@@ -26,9 +30,5 @@ public class OrderController {
         return orderService.findOrder(traderID, traderOrderID);
     }
 
-    @ApiOperation(value = "get a order with broker generated orderID")
-    public Order getOrder(@RequestParam Long orderID){
-        return orderService.findOrder(orderID);
-    }
 
 }

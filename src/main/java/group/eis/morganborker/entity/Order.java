@@ -84,8 +84,29 @@ public class Order {
         this.timeStamp = LocalDateTime.now();
     }
 
+    public Order(Order src){
+        this.traderOrderID = src.getTraderOrderID();
+        this.futureID = src.getFutureID();
+        this.type = src.getType();
+        this.side = src.getSide();
+        this.price = src.getPrice();
+        this.price2 = src.getPrice2();
+        this.amount = src.getAmount();
+        this.traderName = src.getTraderName();
+        this.traderID = src.getTraderID();
+        this.timeStamp = src.getTimeStamp();
+    }
+
     public Long getOrderID() {
         return orderID;
+    }
+
+    public Integer getPrice2() {
+        return price2;
+    }
+
+    public void setPrice2(Integer price2) {
+        this.price2 = price2;
     }
 
     public void setOrderID(Long orderID) {

@@ -1,5 +1,8 @@
 package group.eis.morganborker.entity;
 
+/*
+* A pojo for transferring order from trader gateway
+ */
 public class TraderOrder {
     public Long traderID;
     public Long orderID;

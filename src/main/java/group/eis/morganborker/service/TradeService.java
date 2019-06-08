@@ -1,7 +1,7 @@
 package group.eis.morganborker.service;
 
-import group.eis.morganborker.entity.ActiveOrder;
+import group.eis.morganborker.entity.Order;
 
 public interface TradeService {
-    public void deal(ActiveOrder order);
+    public Integer deal(Order order1, Order order2);
 }
