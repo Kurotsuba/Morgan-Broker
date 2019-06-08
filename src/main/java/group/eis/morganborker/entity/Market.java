@@ -1,7 +1,5 @@
 package group.eis.morganborker.entity;
 
-import group.eis.morganborker.utils.MarketDepth;
-
 import javax.persistence.*;
 
 @Entity
@@ -20,4 +18,7 @@ public class Market {
 
     @Column(nullable = false, name = "sell_order_list_id")
     private Long sellOrderListID;
+
+    public Market() {
+    }
 }

@@ -1,26 +1,34 @@
 package group.eis.morganborker.controller;
 
 import group.eis.morganborker.entity.Order;
-import group.eis.morganborker.utils.OrderParser;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import group.eis.morganborker.entity.TraderOrder;
+import group.eis.morganborker.service.OrderService;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/order")
 public class OrderController {
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @ApiOperation(value = "send a order", notes = "")
     @RequestMapping(method = RequestMethod.POST)
-    public String order(String request){
-        OrderParser op = new OrderParser();
-        Order currentOrder = op.getOrder(request);
-        switch (currentOrder.getType()){
-            case 'm':break;
-            case 'f':break;
-            case 's':break;
-            case 'c':break;
-            default:break;
-        }
-        return "Error";
+    public Long order(@RequestBody TraderOrder order){
+        return orderService.receiveOrder(order);
 
     }
+
+    @ApiOperation(value = "get a order with traderID and trader generated orderID")
+    @RequestMapping(method = RequestMethod.GET)
+    public Order getOrder(@RequestParam Long traderID, @RequestParam Long traderOrderID){
+        return orderService.findOrder(traderID, traderOrderID);
+    }
+
+
 }
