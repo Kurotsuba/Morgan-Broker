@@ -159,7 +159,7 @@ public final class RedisUtil {
         return redisTemplate.opsForHash().hasKey(key, item);
     }
 
-    public long hashIncrement(String key, String item, long delta){
+    public long hashDelta(String key, String item, long delta){
         if(hashHasKeyItem(key, item)){
             return redisTemplate.opsForHash().increment(key, item, delta);
         }
@@ -174,6 +174,7 @@ public final class RedisUtil {
             return null;
         }
     }
+
 
     public long listGetListSize(String key){
         try{

@@ -9,7 +9,6 @@ import group.eis.morganborker.repository.TraderRepository;
 import group.eis.morganborker.service.OrderService;
 import group.eis.morganborker.service.TradeService;
 import group.eis.morganborker.utils.OrderQueueUtil;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -50,8 +49,6 @@ public class OrderServiceImpl implements OrderService {
                 traderRepository.save(trader);
             }
 
-            // record time queue of order
-            orderQueueUtil.addOrder(order);
             orderRepository.save(order);
 
             System.out.println("order saved");
@@ -60,14 +57,20 @@ public class OrderServiceImpl implements OrderService {
                 switch (order.getType()){
                     case 'm':{
                         marketOrder(order);
-                    }case 'f':{
-                        fixOrder(order);
+                        break;
+                    }case 'l':{
+                        orderQueueUtil.addOrder(order);
+                        limitOrder(order);
+                        break;
                     }case 's':{
                         stopOrder(order);
+                        break;
                     }case 'c':{
                         cancelOrder(order);
+                        break;
                     }default:{
                         testOrder(order);
+                        break;
                     }
                 }
 
@@ -102,27 +105,34 @@ public class OrderServiceImpl implements OrderService {
         Integer rest = order.getAmount();
         Order firstOrder = new Order();
         Integer price = 0;
+        char oppSide = 'b';
         while(rest > 0){
             if(order.getSide() == 'b'){
                 price = orderQueueUtil.getLowestPrice(order);
+                oppSide = 's';
             }else if(order.getSide() == 's'){
                 price = orderQueueUtil.getHighestPrice(order);
+                oppSide = 'b';
             }
             if(price == -1){
                 break;
             }
-            firstOrder = orderQueueUtil.getOrder(order.getSide(), price);
+
+            System.out.println("deal start "+price+" "+oppSide);
+            System.out.println("deal order id " + orderQueueUtil.getOrder(order.getFutureID(),oppSide, price));
+            firstOrder = orderRepository.getOne(orderQueueUtil.getOrder(order.getFutureID(),oppSide, price));
 
             Integer dealAmount = tradeService.deal(order, firstOrder);
-            if(dealAmount == rest){
+            if(dealAmount.equals(rest)){
                 break;
             }
             rest -= dealAmount;
+            order.setAmount(rest);
         }
     }
 
 
-    private void fixOrder(Order order){
+    private void limitOrder(Order order){
         char side = order.getSide();
         Integer price = 0;
         Integer rest = order.getAmount();
@@ -133,12 +143,18 @@ public class OrderServiceImpl implements OrderService {
                 return;
             }
             price = orderQueueUtil.getLowestPrice(order);
+            if(price == -1){
+                orderQueueUtil.addAmount(order);
+                return;
+            }
             while(price <= order.getPrice()){
-                Integer dealAmount = tradeService.deal(orderQueueUtil.getOrder('b', price), order);
-                if(dealAmount == rest){
+                Order savedOrder = orderRepository.getOne(orderQueueUtil.getOrder(order.getFutureID(),'s', price));
+                Integer dealAmount = tradeService.deal(order, savedOrder);
+                if(dealAmount.equals(rest)){
                     return;
                 }
                 rest -= dealAmount;
+                order.setAmount(rest);
                 if(orderQueueUtil.getAmount(order.getFutureID(), 'b', price) == 0){
                     price = orderQueueUtil.getLowestPrice(order);
                 }
@@ -151,12 +167,18 @@ public class OrderServiceImpl implements OrderService {
                 return;
             }
             price = orderQueueUtil.getHighestPrice(order);
+            if(price == -1){
+                orderQueueUtil.addAmount(order);
+                return;
+            }
             while(price >= order.getPrice()){
-                Integer dealAmount = tradeService.deal(orderQueueUtil.getOrder('s', price), order);
-                if(dealAmount == rest){
+                Order savedOrder = orderRepository.getOne(orderQueueUtil.getOrder(order.getFutureID(),'b', price));
+                Integer dealAmount = tradeService.deal(order, savedOrder);
+                if(dealAmount.equals(rest)){
                     return;
                 }
                 rest -= dealAmount;
+                order.setAmount(rest);
                 if(orderQueueUtil.getAmount(order.getFutureID(), 's', price) == 0){
                     price = orderQueueUtil.getHighestPrice(order);
                 }
@@ -167,9 +189,21 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    private void stopOrder(Order order){};
+    private void stopOrder(Order order){
+        orderQueueUtil.addStopOrder(order);
+    }
 
-    private void cancelOrder(Order order){};
+    private void cancelOrder(Order order){
+        Order target = orderRepository.findOrderByTraderIDAndTraderOrderID(order.getTraderID(), order.getPrice().longValue());
+        if(target != null) {
+            if(target.getType() != 'c') {
+                if(target.getType() != 's'){
+                    orderQueueUtil.decreseAmount(target);
+                }
+                orderQueueUtil.addCancelOrder(target);
+            }
+        }
+    }
 
     private void testOrder(Order order){
         orderQueueUtil.addAmount(order);

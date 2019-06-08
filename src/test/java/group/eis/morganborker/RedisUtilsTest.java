@@ -16,12 +16,7 @@ public class RedisUtilsTest {
 
     @Test
     public void testListPushPop(){
-        redisUtil.listPush("test1", 0);
-        redisUtil.listPush("test1", 1);
-        redisUtil.listPush("test1", 2);
-        Integer value = (Integer) redisUtil.listPop("test");
-        System.out.println(value);
-        value = (Integer) redisUtil.listPop("test");
-        System.out.println(value);
+        System.out.println(redisUtil.setIsMember("cancle_order", 1));
+
     }
 }

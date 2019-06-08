@@ -27,11 +27,11 @@ public class MarketServiceImpl implements MarketService {
         HashMap<String, Integer> buyMap = new HashMap<>();
         HashMap<String, Integer> sellMap = new HashMap<>();
         for (Object key: buyKeySet) {
-            buyMap.put((String)key, (Integer) redisUtil.hashGet(futureID.toString()+"buy_list", (String)key));
+            buyMap.put((String)key, (Integer) redisUtil.hashGet(futureID.toString()+"_buy_list", (String)key));
         }
 
         for (Object key: sellKeySet) {
-            sellMap.put((String)key, (Integer) redisUtil.hashGet(futureID.toString()+"sell_list", (String)key));
+            sellMap.put((String)key, (Integer) redisUtil.hashGet(futureID.toString()+"_sell_list", (String)key));
         }
 
 
