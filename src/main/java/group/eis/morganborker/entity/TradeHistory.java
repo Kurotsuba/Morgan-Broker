@@ -32,6 +32,12 @@ public class TradeHistory {
     @Column(nullable = false, name = "time_stamp")
     private LocalDateTime timeStamp;
 
+    @Column(nullable = false, name = "initiator_side")
+    private char initiatorSide;
+
+    @Column(nullable = false, name = "future_id")
+    private Long futureID;
+
     public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
@@ -40,14 +46,24 @@ public class TradeHistory {
         this.timeStamp = timeStamp;
     }
 
-    public TradeHistory(Long buyTraderOrderID, Long buyTraderID, Long sellTraderOrderID, Long sellTraderID, Integer amount, Integer price) {
+    public TradeHistory(Long buyTraderOrderID, Long buyTraderID, Long sellTraderOrderID, Long sellTraderID, Integer amount, Integer price, char initiatorSide, Long futureID) {
         this.buyTraderOrderID = buyTraderOrderID;
         this.buyTraderID = buyTraderID;
+        this.futureID = futureID;
         this.sellTraderOrderID = sellTraderOrderID;
         this.sellTraderID = sellTraderID;
         this.amount = amount;
         this.price = price;
         this.timeStamp = LocalDateTime.now();
+        this.initiatorSide = initiatorSide;
+    }
+
+    public char getInitiatorSide() {
+        return initiatorSide;
+    }
+
+    public void setInitiatorSide(char initiatorSide) {
+        this.initiatorSide = initiatorSide;
     }
 
     public TradeHistory() {

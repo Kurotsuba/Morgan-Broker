@@ -31,11 +31,6 @@ public class WebSocketServer {
 
     @OnClose
     public void onClose(){
-        try {
-            sendMessage("Connection Closed");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         webSocketServers.remove(this);
     }
 

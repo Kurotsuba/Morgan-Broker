@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import group.eis.morganborker.entity.Order;
 import group.eis.morganborker.entity.Trader;
 import group.eis.morganborker.entity.TraderOrder;
+import group.eis.morganborker.repository.FutureRepository;
 import group.eis.morganborker.repository.OrderRepository;
 import group.eis.morganborker.repository.TraderRepository;
 import group.eis.morganborker.service.OrderService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Service("OrderService")
 @Repository
@@ -33,6 +35,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private TradeService tradeService;
+
+    @Autowired
+    private FutureRepository futureRepository;
 
     @Override
     public Long receiveOrder(TraderOrder traderOrder) {
@@ -80,7 +85,9 @@ public class OrderServiceImpl implements OrderService {
                 wsResult.put("message", "order process done");
 
                 Gson gson = new Gson();
-                WebSocketServer.sendInfo(gson.toJson(wsResult));
+                String jsonStr = gson.toJson(wsResult);
+                jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"type\":\"order_process_message\"}";
+                WebSocketServer.sendInfo(jsonStr);
             }
             return order.getOrderID();
 
@@ -100,6 +107,13 @@ public class OrderServiceImpl implements OrderService {
     public Order findOrder(Long traderID, Long traderOrderID) {
         return orderRepository.findOrderByTraderIDAndTraderOrderID(traderID, traderOrderID);
     }
+
+    @Override
+    public List<Order> findOrderByFuture(String futureName, String period) {
+        Long futureID = futureRepository.findByFutureNameAndPeriod(futureName, period).getFutureID();
+        return orderRepository.findAllByFutureID(futureID);
+    }
+
 
     private void marketOrder(Order order){
         Integer rest = order.getAmount();
@@ -162,7 +176,8 @@ public class OrderServiceImpl implements OrderService {
             orderQueueUtil.addAmount(order);
 
         }else if(side == 's'){
-            if(orderQueueUtil.getLowestPrice(order) <= order.getPrice()){
+            Integer lPrice = orderQueueUtil.getLowestPrice(order);
+            if( lPrice!= -1 && lPrice <= order.getPrice()){
                 orderQueueUtil.addAmount(order);
                 return;
             }
