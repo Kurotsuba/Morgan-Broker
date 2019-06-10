@@ -85,6 +85,7 @@ public class Order {
         this.side = traderOrder.side;
         this.traderID = traderOrder.traderID;
         this.timeStamp = LocalDateTime.now();
+        this.cancelID = traderOrder.cancelID;
     }
 
     public Order(Order src){
@@ -98,6 +99,7 @@ public class Order {
         this.traderName = src.getTraderName();
         this.traderID = src.getTraderID();
         this.timeStamp = src.getTimeStamp();
+        this.cancelID = src.getCancelID();
     }
 
     public Long getOrderID() {

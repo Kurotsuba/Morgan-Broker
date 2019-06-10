@@ -1,6 +1,7 @@
 package group.eis.morganborker.service.Impl;
 
 import com.google.gson.Gson;
+import group.eis.morganborker.entity.Future;
 import group.eis.morganborker.entity.Order;
 import group.eis.morganborker.entity.Trader;
 import group.eis.morganborker.entity.TraderOrder;
@@ -10,12 +11,13 @@ import group.eis.morganborker.repository.TraderRepository;
 import group.eis.morganborker.service.OrderService;
 import group.eis.morganborker.service.TradeService;
 import group.eis.morganborker.utils.OrderQueueUtil;
+import group.eis.morganborker.utils.RedisUtil;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service("OrderService")
 @Repository
@@ -38,6 +40,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private FutureRepository futureRepository;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public Long receiveOrder(TraderOrder traderOrder) {
@@ -64,8 +69,12 @@ public class OrderServiceImpl implements OrderService {
                         marketOrder(order);
                         break;
                     }case 'l':{
-                        orderQueueUtil.addOrder(order);
-                        limitOrder(order);
+                        try{
+                            orderQueueUtil.addOrder(order);
+                            limitOrder(order);
+                        }catch (NullPointerException e){
+                            e.printStackTrace();
+                        }
                         break;
                     }case 's':{
                         stopOrder(order);
@@ -83,12 +92,21 @@ public class OrderServiceImpl implements OrderService {
                 wsResult.put("traderID", order.getTraderID().toString());
                 wsResult.put("traderName", traderRepository.getOne(order.getTraderID()).getTraderName());
                 wsResult.put("orderID", order.getOrderID().toString());
+                wsResult.put("type", String.valueOf(order.getType()));
+                wsResult.put("amount", order.getAmount().toString());
+                wsResult.put("future_id", order.getFutureID().toString());
+                wsResult.put("price", order.getPrice().toString());
                 wsResult.put("message", "order process done");
 
                 Gson gson = new Gson();
                 String jsonStr = gson.toJson(wsResult);
-                jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"type\":\"order_process_message\"}";
-                WebSocketServer.sendInfo(jsonStr);
+                jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"msg_type\":\"order_process_message\"}";
+                try{
+                    WebSocketServer.sendInfo(jsonStr);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
             return order.getOrderID();
 
@@ -113,6 +131,43 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findOrderByFuture(String futureName, String period) {
         Long futureID = futureRepository.findByFutureNameAndPeriod(futureName, period).getFutureID();
         return orderRepository.findAllByFutureID(futureID);
+    }
+
+    @Override
+    public Map<String, Map<String, Integer>> findActiveOrderByFuture(String name, String period) {
+        Future future = futureRepository.findByFutureNameAndPeriod(name, period);
+        Set<Object> buyPriceSet = redisUtil.hashKeys(future.getFutureID()+"_buy_list");
+        Set<Object> sellPriceSet = redisUtil.hashKeys(future.getFutureID()+"_sell_list");
+        Set<Integer> buyIDSet = new HashSet<>();
+        Set<Integer> sellIDSet = new HashSet<>();
+        for(Object price : buyPriceSet){
+            List<Object> idList = redisUtil.listGet(future.getFutureID()+"_b_"+(String) price, 0, -1);
+            for(Object id : idList){
+                buyIDSet.add((Integer)id);
+            }
+        }
+
+        for(Object price : sellPriceSet){
+            List<Object> idList = redisUtil.listGet(future.getFutureID()+"_s_"+(String) price, 0, -1);
+            for(Object id : idList){
+                sellIDSet.add((Integer)id);
+            }
+        }
+
+        Map<String, Integer> buyOrder = new HashMap<>();
+        Map<String, Integer> sellOrder = new HashMap<>();
+        for(Integer id : buyIDSet){
+            buyOrder.put(id.toString(), (Integer) redisUtil.get(id.toString()));
+        }
+        for(Integer id : sellIDSet){
+            sellOrder.put(id.toString(), (Integer) redisUtil.get(id.toString()));
+        }
+
+        Map <String,Map<String, Integer>> result = new HashMap<>();
+        result.put("buy", buyOrder);
+        result.put("sell", sellOrder);
+        return result;
+
     }
 
 
@@ -223,12 +278,26 @@ public class OrderServiceImpl implements OrderService {
 
     private void cancelOrder(Order order){
         Order target = orderRepository.findOrderByTraderIDAndTraderOrderID(order.getTraderID(), order.getPrice().longValue());
-        if(target != null) {
+        if(target != null && orderQueueUtil.findCancelOrder(target.getOrderID())) {
             if(target.getType() != 'c') {
                 if(target.getType() != 's'){
+                    target.setAmount(orderQueueUtil.getActiveOrderRest(target));
                     orderQueueUtil.decreseAmount(target);
                 }
                 orderQueueUtil.addCancelOrder(target);
+                HashMap<String, Long> wsPack = new HashMap<>();
+                wsPack.put("order_id", order.getOrderID());
+                wsPack.put("cancel_id", order.getCancelID());
+                wsPack.put("trader_id", order.getTraderID());
+                Gson gson = new Gson();
+                String jsonStr = gson.toJson(wsPack);
+                jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"msg_type\":\"cancel_message\"}";
+                try{
+                    WebSocketServer.sendInfo(jsonStr);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
         }
     }

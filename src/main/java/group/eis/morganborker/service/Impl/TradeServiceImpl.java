@@ -64,7 +64,7 @@ public class TradeServiceImpl implements TradeService {
         if(dealtime % pushFrequency == 0){
             Map<String, HashMap<String, Integer>> result = marketService.getMarket(savedOrder.getFutureID(), 3);
             String jsonStr = gson.toJson(result);
-            jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"type\":\"market_depth\"}";
+            jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"msg_type\":\"market_depth\"}";
             try {
                 WebSocketServer.sendInfo(jsonStr);
             } catch (IOException e) {
@@ -116,8 +116,9 @@ public class TradeServiceImpl implements TradeService {
         pack.price = th.getPrice();
         pack.qty = th.getAmount();
         pack.tradeID = th.getTradeID();
+        pack.time = th.getTimeStamp();
         String jsonStr = gson.toJson(pack);
-        jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"type\":\"deal_message\"}";
+        jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"msg_type\":\"deal_message\"}";
         try {
             WebSocketServer.sendInfo(jsonStr);
         } catch (IOException e) {

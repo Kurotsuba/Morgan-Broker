@@ -2,6 +2,8 @@ package group.eis.morganborker.utils;
 
 import group.eis.morganborker.entity.TradeHistory;
 
+import java.time.LocalDateTime;
+
 public class TradeHistoryPack {
     public Long tradeID;
     public String future_name;
@@ -13,6 +15,7 @@ public class TradeHistoryPack {
     public String seller_name;
     public Long seller_order_id;
     public char initiator_side;
+    public LocalDateTime time;
 
     public TradeHistoryPack() {
     }

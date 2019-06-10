@@ -5,6 +5,7 @@ import group.eis.morganborker.entity.TraderOrder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface OrderService {
@@ -12,4 +13,5 @@ public interface OrderService {
     Order findOrder(Long id);
     Order findOrder(Long traderID, Long traderOrderID);
     List<Order> findOrderByFuture(String futureName, String period);
+    Map<String, Map<String, Integer>> findActiveOrderByFuture(String name, String period);
 }
