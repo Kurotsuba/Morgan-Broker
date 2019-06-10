@@ -81,6 +81,7 @@ public class OrderServiceImpl implements OrderService {
 
                 HashMap<String, String> wsResult = new HashMap<>();
                 wsResult.put("traderID", order.getTraderID().toString());
+                wsResult.put("traderName", traderRepository.getOne(order.getTraderID()).getTraderName());
                 wsResult.put("orderID", order.getOrderID().toString());
                 wsResult.put("message", "order process done");
 
@@ -134,7 +135,11 @@ public class OrderServiceImpl implements OrderService {
 
             System.out.println("deal start "+price+" "+oppSide);
             System.out.println("deal order id " + orderQueueUtil.getOrder(order.getFutureID(),oppSide, price));
-            firstOrder = orderRepository.getOne(orderQueueUtil.getOrder(order.getFutureID(),oppSide, price));
+            Long orderID = orderQueueUtil.getOrder(order.getFutureID(),oppSide, price);
+            if(orderID < 0){
+                break;
+            }
+            firstOrder = orderRepository.getOne(orderID);
 
             Integer dealAmount = tradeService.deal(order, firstOrder);
             if(dealAmount.equals(rest)){
@@ -162,7 +167,11 @@ public class OrderServiceImpl implements OrderService {
                 return;
             }
             while(price <= order.getPrice()){
-                Order savedOrder = orderRepository.getOne(orderQueueUtil.getOrder(order.getFutureID(),'s', price));
+                Long orderID = orderQueueUtil.getOrder(order.getFutureID(),'s', price);
+                if(orderID < 0){
+                    return;
+                }
+                Order savedOrder = orderRepository.getOne(orderID);
                 Integer dealAmount = tradeService.deal(order, savedOrder);
                 if(dealAmount.equals(rest)){
                     return;
@@ -187,7 +196,11 @@ public class OrderServiceImpl implements OrderService {
                 return;
             }
             while(price >= order.getPrice()){
-                Order savedOrder = orderRepository.getOne(orderQueueUtil.getOrder(order.getFutureID(),'b', price));
+                Long orderID = orderQueueUtil.getOrder(order.getFutureID(),'b', price);
+                if(orderID < 0){
+                    return;
+                }
+                Order savedOrder = orderRepository.getOne(orderID);
                 Integer dealAmount = tradeService.deal(order, savedOrder);
                 if(dealAmount.equals(rest)){
                     return;

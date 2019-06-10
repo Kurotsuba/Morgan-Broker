@@ -42,6 +42,9 @@ public class Order {
     @Column(name = "time_stamp")
     private LocalDateTime timeStamp;
 
+    @Column(name = "cancel_id")
+    private Long cancelID;
+
     public Order(){
 
     }
@@ -179,6 +182,14 @@ public class Order {
 
     public LocalDateTime getTimeStamp() {
         return timeStamp;
+    }
+
+    public Long getCancelID() {
+        return cancelID;
+    }
+
+    public void setCancelID(Long cancelID) {
+        this.cancelID = cancelID;
     }
 
     public void setTimeStamp(LocalDateTime timeStamp) {

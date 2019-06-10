@@ -1,13 +1,17 @@
 package group.eis.morganborker.service.Impl;
 
 import com.google.gson.Gson;
+import group.eis.morganborker.entity.Future;
 import group.eis.morganborker.entity.Order;
 import group.eis.morganborker.entity.TradeHistory;
+import group.eis.morganborker.repository.FutureRepository;
 import group.eis.morganborker.repository.OrderRepository;
 import group.eis.morganborker.repository.TradeHistoryRepository;
+import group.eis.morganborker.repository.TraderRepository;
 import group.eis.morganborker.service.MarketService;
 import group.eis.morganborker.service.TradeService;
 import group.eis.morganborker.utils.OrderQueueUtil;
+import group.eis.morganborker.utils.TradeHistoryPack;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -27,15 +31,21 @@ public class TradeServiceImpl implements TradeService {
 
     private final MarketService marketService;
 
+    private final FutureRepository futureRepository;
+
+    private final TraderRepository traderRepository;
+
     private static int dealtime;
 
     private final int pushFrequency;
 
-    public TradeServiceImpl(OrderQueueUtil orderQueueUtil, TradeHistoryRepository tradeHistoryRepository, OrderRepository orderRepository, MarketService marketService) {
+    public TradeServiceImpl(OrderQueueUtil orderQueueUtil, TradeHistoryRepository tradeHistoryRepository, OrderRepository orderRepository, MarketService marketService, FutureRepository futureRepository, TraderRepository traderRepository) {
         this.orderQueueUtil = orderQueueUtil;
         this.marketService = marketService;
         this.tradeHistoryRepository = tradeHistoryRepository;
         this.orderRepository = orderRepository;
+        this.futureRepository = futureRepository;
+        this.traderRepository = traderRepository;
         this.gson = new Gson();
         this.dealtime = 0;
         this.pushFrequency = 5;
@@ -52,7 +62,7 @@ public class TradeServiceImpl implements TradeService {
         }
 
         if(dealtime % pushFrequency == 0){
-            Map<String, HashMap<String, Integer>> result = marketService.getMarket(savedOrder.getFutureID());
+            Map<String, HashMap<String, Integer>> result = marketService.getMarket(savedOrder.getFutureID(), 3);
             String jsonStr = gson.toJson(result);
             jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"type\":\"market_depth\"}";
             try {
@@ -73,15 +83,19 @@ public class TradeServiceImpl implements TradeService {
             so = newOrder;
         }
 
+        Integer savedRest = orderQueueUtil.getActiveOrderRest(savedOrder);
         Integer result = 0;
-        if(newOrder.getAmount() >= savedOrder.getAmount()){
-            result = savedOrder.getAmount();
+        if(newOrder.getAmount() >= savedRest){
+            result = savedRest;
             orderQueueUtil.popOrder(savedOrder.getFutureID(),savedOrder.getSide(), savedOrder.getPrice());
+            orderQueueUtil.decreaseActiveOrder(savedOrder, result);
+            savedOrder.setAmount(savedRest);
             orderQueueUtil.decreseAmount(savedOrder);
             System.out.println("Deal done with rest");
         }else{
             result = newOrder.getAmount();
             savedOrder.setAmount(result);
+            orderQueueUtil.decreaseActiveOrder(savedOrder, result);
             orderQueueUtil.decreseAmount(savedOrder);
             System.out.println("Deal done without rest");
         }
@@ -90,30 +104,25 @@ public class TradeServiceImpl implements TradeService {
         TradeHistory th = new TradeHistory(bo.getTraderOrderID(),bo.getTraderID(),so.getTraderOrderID(),so.getTraderID(),result,savedOrder.getPrice(), savedOrder.getSide(), savedOrder.getFutureID());
         tradeHistoryRepository.save(th);
 
-        HashMap<String, String> wsPacket = new HashMap<>();
-        wsPacket.put("trader_id", newOrder.getTraderID().toString());
-        wsPacket.put("order_id", newOrder.getTraderOrderID().toString());
-        wsPacket.put("price", savedOrder.getPrice().toString());
-        wsPacket.put("amount", result.toString());
-        wsPacket.put("time", th.getTimeStamp().toString());
-        String jsonStr = gson.toJson(wsPacket);
+        TradeHistoryPack pack = new TradeHistoryPack();
+        Future future = futureRepository.getOne(so.getFutureID());
+        pack.seller_order_id = so.getTraderOrderID();
+        pack.buyer_order_id = bo.getTraderOrderID();
+        pack.future_name = future.getFutureName();
+        pack.period = future.getPeriod();
+        pack.buyer_name = traderRepository.getOne(bo.getTraderID()).getTraderName();
+        pack.seller_name = traderRepository.getOne(so.getTraderID()).getTraderName();
+        pack.initiator_side = newOrder.getSide();
+        pack.price = th.getPrice();
+        pack.qty = th.getAmount();
+        pack.tradeID = th.getTradeID();
+        String jsonStr = gson.toJson(pack);
         jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"type\":\"deal_message\"}";
         try {
             WebSocketServer.sendInfo(jsonStr);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        jsonStr = gson.toJson(wsPacket);
-        jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"type\":\"deal_message\"}";
-        wsPacket.replace("trader_id", savedOrder.getTraderID().toString());
-        wsPacket.replace("order_id", savedOrder.getTraderOrderID().toString());
-        try {
-            WebSocketServer.sendInfo(jsonStr);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
 
         return result;
     }

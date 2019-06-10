@@ -9,7 +9,9 @@ public class TradeHistoryPack {
     public Integer price;
     public Integer qty;
     public String buyer_name;
+    public Long buyer_order_id;
     public String seller_name;
+    public Long seller_order_id;
     public char initiator_side;
 
     public TradeHistoryPack() {

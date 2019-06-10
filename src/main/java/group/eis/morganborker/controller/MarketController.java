@@ -16,6 +16,6 @@ public class MarketController {
     private MarketService marketService;
     @RequestMapping(method = RequestMethod.GET)
     public HashMap<String, HashMap<String, Integer>> getHistory(@RequestParam Long futureID){
-        return marketService.getMarket(futureID);
+        return marketService.getMarket(futureID, -1);
     }
 }

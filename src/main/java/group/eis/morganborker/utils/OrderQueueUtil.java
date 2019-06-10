@@ -1,6 +1,7 @@
 package group.eis.morganborker.utils;
 
 import group.eis.morganborker.entity.Order;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,28 @@ import java.util.*;
 public class OrderQueueUtil {
     @Autowired
     RedisUtil redisUtil;
+
+    /*
+    * maintain (String, Int) pair for every active order
+    * key = {order_id}
+    * value = rest
+     */
+
+    public void addActiveOrder(Order order){
+        redisUtil.set(order.getOrderID().toString(), order.getAmount());
+    }
+
+    public void decreaseActiveOrder(Order order, int amount){
+        Integer result = (Integer) redisUtil.get(order.getOrderID().toString());
+        if(result <= amount){
+            redisUtil.delete(order.getOrderID().toString());
+        }
+        redisUtil.set(order.getOrderID().toString(), result - amount);
+    }
+
+    public Integer getActiveOrderRest(Order order){
+        return (Integer) redisUtil.get(order.getOrderID().toString());
+    }
 
     /*
     * maintain several redis hashmaps for market depth
@@ -44,6 +67,7 @@ public class OrderQueueUtil {
         }else if(order.getSide() == 's'){
             key = key + "_sell_list";
         }
+        System.out.println();
         boolean result = redisUtil.hashDelta(key, order.getPrice().toString(), -order.getAmount()) > 0;
         if((Integer) redisUtil.hashGet(key, order.getPrice().toString()) == 0){
             redisUtil.hashDel(key, order.getPrice().toString());
@@ -93,12 +117,17 @@ public class OrderQueueUtil {
      */
 
     public boolean addOrder(Order order){
-        return redisUtil.listPush(order.getFutureID().toString()+ "_" +order.getSide() + "_" + order.getPrice().toString(), order.getOrderID());
+        redisUtil.listPush(order.getFutureID().toString()+ "_" +order.getSide() + "_" + order.getPrice().toString(), order.getOrderID());
+        addActiveOrder(order);
+        return true;
     }
 
     public Long getOrder(Long futureID, char side, Integer price){
         Integer orderID = (Integer)redisUtil.listGetOne(futureID.toString()+ "_" + side + "_" + price.toString(), 0);
-        return orderID.longValue();
+        if(redisUtil.hasKey(orderID.toString())){
+            return orderID.longValue();
+        }
+        return Long.valueOf(-1);
     }
 
     public Long popOrder(Long futureID, char side, Integer price){
@@ -116,15 +145,15 @@ public class OrderQueueUtil {
     * value = {order_id}
      */
     public void addCancelOrder(Order order){
-        redisUtil.setAdd("cancel_list", order.getOrderID());
+        redisUtil.setAdd("cancel_list", order.getCancelID());
     }
 
     public boolean findCancelOrder(Long order_id){
         return redisUtil.setIsMember("cancel_list", order_id);
     }
 
-    public void deleteCancelOrder(Long stop_id){
-        redisUtil.setRemove("cancel_list", stop_id);
+    public void deleteCancelOrder(Long order_id){
+        redisUtil.setRemove("cancel_list", order_id);
     }
 
     /*

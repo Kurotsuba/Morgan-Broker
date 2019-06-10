@@ -1,5 +1,6 @@
 package group.eis.morganborker.service.Impl;
 
+import group.eis.morganborker.entity.Future;
 import group.eis.morganborker.entity.TradeHistory;
 import group.eis.morganborker.repository.FutureRepository;
 import group.eis.morganborker.repository.TradeHistoryRepository;
@@ -35,8 +36,8 @@ public class TradeHistoryServiceImpl implements TradeHistoryService {
 
     @Override
     public List<TradeHistoryPack> getHistoryByFuture(String futureName, String period) {
-        Long futureID = futureRepository.findByFutureNameAndPeriod(futureName, period).getFutureID();
-        List<TradeHistory> tradeHistoryList = tradeHistoryRepository.findAllByFutureID(futureID);
+        Future future = futureRepository.findByFutureNameAndPeriod(futureName, period);
+        List<TradeHistory> tradeHistoryList = tradeHistoryRepository.findAllByFutureID(future.getFutureID());
         List<TradeHistoryPack> result = new LinkedList<>();
         for(TradeHistory tradeHistory : tradeHistoryList){
             TradeHistoryPack pack = new TradeHistoryPack();
@@ -47,6 +48,9 @@ public class TradeHistoryServiceImpl implements TradeHistoryService {
             pack.tradeID = tradeHistory.getTradeID();
             pack.period = period;
             pack.initiator_side = tradeHistory.getInitiatorSide();
+            pack.future_name = future.getFutureName();
+            pack.buyer_order_id = tradeHistory.getBuyTraderOrderID();
+            pack.seller_order_id = tradeHistory.getSellTraderOrderID();
             result.add(pack);
         }
 

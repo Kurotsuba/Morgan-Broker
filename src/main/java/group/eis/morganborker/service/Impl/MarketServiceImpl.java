@@ -17,7 +17,8 @@ public class MarketServiceImpl implements MarketService {
         gson = new Gson();
     }
     @Override
-    public HashMap<String, HashMap<String, Integer>> getMarket(Long futureID) {
+    public HashMap<String, HashMap<String, Integer>> getMarket(Long futureID, int count) {
+        int inCount = count;
         Set<Object> buyKeySet = redisUtil.hashKeys(futureID.toString()+"_buy_list");
         Set<Object> sellKeySet = redisUtil.hashKeys(futureID.toString()+"_sell_list");
         HashMap<String, Integer> buyMap = new HashMap<>();
@@ -29,25 +30,30 @@ public class MarketServiceImpl implements MarketService {
         }
         Collections.sort(tempList);
         Collections.reverse(tempList);
-        int count = 3;
         for(Integer i : tempList){
-            count--;
             buyMap.put(i.toString(), (Integer) redisUtil.hashGet(futureID.toString()+"_buy_list", i.toString()));
-            if(count == 0){
+            if(inCount == -1){
+                continue;
+            }
+            inCount--;
+            if(inCount == 0){
                 break;
             }
         }
 
         tempList.clear();
+        inCount = count;
         for(Object o : sellKeySet){
             tempList.add(Integer.valueOf((String)o));
         }
         Collections.sort(tempList);
-        count = 3;
         for(Integer i : tempList){
-            count--;
             sellMap.put(i.toString(), (Integer) redisUtil.hashGet(futureID.toString()+"_sell_list", i.toString()));
-            if(count == 0){
+            if(inCount == -1){
+                continue;
+            }
+            inCount--;
+            if(inCount == 0){
                 break;
             }
         }
