@@ -58,6 +58,14 @@ public class TradeHistory {
         this.initiatorSide = initiatorSide;
     }
 
+    public Long getFutureID() {
+        return futureID;
+    }
+
+    public void setFutureID(Long futureID) {
+        this.futureID = futureID;
+    }
+
     public char getInitiatorSide() {
         return initiatorSide;
     }

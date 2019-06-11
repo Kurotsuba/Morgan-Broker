@@ -1,6 +1,7 @@
 package group.eis.morganborker.service.Impl;
 
 import com.google.gson.Gson;
+import group.eis.morganborker.controller.ActiveOrderPOJO;
 import group.eis.morganborker.entity.Future;
 import group.eis.morganborker.entity.Order;
 import group.eis.morganborker.entity.Trader;
@@ -12,7 +13,6 @@ import group.eis.morganborker.service.OrderService;
 import group.eis.morganborker.service.TradeService;
 import group.eis.morganborker.utils.OrderQueueUtil;
 import group.eis.morganborker.utils.RedisUtil;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -54,40 +54,44 @@ public class OrderServiceImpl implements OrderService {
                 System.out.println("order skipped");
                 return 0l;
             }
-            if(!traderRepository.findById(order.getTraderID()).isPresent()){
-                Trader trader = new Trader(order.getTraderID(), order.getTraderName());
-                traderRepository.save(trader);
-            }
+//            if(traderRepository.getOne(order.getTraderID()) == null){
+//                Trader trader = new Trader(order.getTraderID(), order.getTraderName());
+//                traderRepository.save(trader);
+//            }
 
             orderRepository.save(order);
 
             System.out.println("order saved");
-            synchronized (this){
+            synchronized (this) {
 
-                switch (order.getType()){
-                    case 'm':{
+                switch (order.getType()) {
+                    case 'm': {
                         marketOrder(order);
                         break;
-                    }case 'l':{
-                        try{
+                    }
+                    case 'l': {
+                        try {
                             orderQueueUtil.addOrder(order);
                             limitOrder(order);
-                        }catch (NullPointerException e){
+                        } catch (NullPointerException e) {
                             e.printStackTrace();
                         }
                         break;
-                    }case 's':{
+                    }
+                    case 's': {
                         stopOrder(order);
                         break;
-                    }case 'c':{
+                    }
+                    case 'c': {
                         cancelOrder(order);
                         break;
-                    }default:{
+                    }
+                    default: {
                         testOrder(order);
                         break;
                     }
                 }
-
+            }
                 HashMap<String, String> wsResult = new HashMap<>();
                 wsResult.put("traderID", order.getTraderID().toString());
                 wsResult.put("traderName", traderRepository.getOne(order.getTraderID()).getTraderName());
@@ -107,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
                     e.printStackTrace();
                 }
 
-            }
+
             return order.getOrderID();
 
 
@@ -134,38 +138,41 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Map<String, Map<String, Integer>> findActiveOrderByFuture(String name, String period) {
+    public List<ActiveOrderPOJO> findActiveOrderByFuture(String name, String period) {
         Future future = futureRepository.findByFutureNameAndPeriod(name, period);
         Set<Object> buyPriceSet = redisUtil.hashKeys(future.getFutureID()+"_buy_list");
         Set<Object> sellPriceSet = redisUtil.hashKeys(future.getFutureID()+"_sell_list");
-        Set<Integer> buyIDSet = new HashSet<>();
-        Set<Integer> sellIDSet = new HashSet<>();
+        Set<Integer> IDSet = new HashSet<>();
+
         for(Object price : buyPriceSet){
             List<Object> idList = redisUtil.listGet(future.getFutureID()+"_b_"+(String) price, 0, -1);
             for(Object id : idList){
-                buyIDSet.add((Integer)id);
+                IDSet.add((Integer)id);
             }
         }
 
         for(Object price : sellPriceSet){
             List<Object> idList = redisUtil.listGet(future.getFutureID()+"_s_"+(String) price, 0, -1);
             for(Object id : idList){
-                sellIDSet.add((Integer)id);
+                IDSet.add((Integer)id);
             }
         }
-
-        Map<String, Integer> buyOrder = new HashMap<>();
-        Map<String, Integer> sellOrder = new HashMap<>();
-        for(Integer id : buyIDSet){
-            buyOrder.put(id.toString(), (Integer) redisUtil.get(id.toString()));
+        List<ActiveOrderPOJO> result = new LinkedList<>();
+        for(Integer id : IDSet){
+            ActiveOrderPOJO pojo = new ActiveOrderPOJO();
+            Order order = orderRepository.getOne(id.longValue());
+            pojo.futureID = order.getFutureID();
+            pojo.oldID = order.getTraderOrderID();
+            pojo.orderID = order.getOrderID();
+            pojo.price = order.getPrice();
+            pojo.qty = order.getAmount();
+            pojo.side = order.getSide();
+            pojo.type = order.getType();
+            pojo.traderID = order.getTraderID();
+            pojo.rest = (Integer)redisUtil.get(id.toString());
+            result.add(pojo);
         }
-        for(Integer id : sellIDSet){
-            sellOrder.put(id.toString(), (Integer) redisUtil.get(id.toString()));
-        }
 
-        Map <String,Map<String, Integer>> result = new HashMap<>();
-        result.put("buy", buyOrder);
-        result.put("sell", sellOrder);
         return result;
 
     }
@@ -277,8 +284,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void cancelOrder(Order order){
-        Order target = orderRepository.findOrderByTraderIDAndTraderOrderID(order.getTraderID(), order.getPrice().longValue());
-        if(target != null && orderQueueUtil.findCancelOrder(target.getOrderID())) {
+        Order target = orderRepository.getOne(order.getCancelID());
+        System.out.println(target.getOrderID());
+        System.out.println(orderQueueUtil.findCancelOrder(target.getOrderID()));
+        if(target != null && !orderQueueUtil.findCancelOrder(target.getOrderID())) {
             if(target.getType() != 'c') {
                 if(target.getType() != 's'){
                     target.setAmount(orderQueueUtil.getActiveOrderRest(target));
@@ -292,6 +301,7 @@ public class OrderServiceImpl implements OrderService {
                 Gson gson = new Gson();
                 String jsonStr = gson.toJson(wsPack);
                 jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"msg_type\":\"cancel_message\"}";
+                System.out.println("Order canceled");
                 try{
                     WebSocketServer.sendInfo(jsonStr);
                 }catch (Exception e){

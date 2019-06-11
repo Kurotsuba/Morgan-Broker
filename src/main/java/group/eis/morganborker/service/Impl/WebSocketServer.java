@@ -47,9 +47,13 @@ public class WebSocketServer {
         this.session.getBasicRemote().sendText(message);
     }
 
-    public static void sendInfo(String message) throws IOException{
+    public static void sendInfo(String message){
         for(String key : webSocketServers.keySet()){
-            webSocketServers.get(key).session.getBasicRemote().sendText(message);
+            try{
+                webSocketServers.get(key).session.getBasicRemote().sendText(message);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 }

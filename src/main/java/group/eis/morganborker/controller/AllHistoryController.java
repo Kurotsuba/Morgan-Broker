@@ -1,26 +1,24 @@
 package group.eis.morganborker.controller;
 
-import group.eis.morganborker.entity.TradeHistory;
 import group.eis.morganborker.service.TradeHistoryService;
 import group.eis.morganborker.utils.TradeHistoryPack;
-import group.eis.morganborker.utils.TradeHistoryPack2;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/history")
-public class TradeHistoryContoller {
+@RequestMapping("/get_all_history")
+public class AllHistoryController {
     @Autowired
-    private TradeHistoryService tradeHistoryService;
+    TradeHistoryService tradeHistoryService;
 
+    @ApiOperation(value = "get all trade history")
     @RequestMapping(method = RequestMethod.GET)
-    public Map<String, List<TradeHistoryPack2>> getTradeHistory(@RequestParam Long traderID){
-        return tradeHistoryService.getHistory(traderID);
+    public List<TradeHistoryPack> getAllHistory(){
+        return tradeHistoryService.getAllHistory();
     }
 }

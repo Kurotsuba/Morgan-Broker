@@ -48,7 +48,7 @@ public class TradeServiceImpl implements TradeService {
         this.traderRepository = traderRepository;
         this.gson = new Gson();
         this.dealtime = 0;
-        this.pushFrequency = 5;
+        this.pushFrequency = 1;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TradeServiceImpl implements TradeService {
             jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"msg_type\":\"market_depth\"}";
             try {
                 WebSocketServer.sendInfo(jsonStr);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -121,7 +121,7 @@ public class TradeServiceImpl implements TradeService {
         jsonStr = jsonStr.substring(0, jsonStr.lastIndexOf('}')) + ",\"msg_type\":\"deal_message\"}";
         try {
             WebSocketServer.sendInfo(jsonStr);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
